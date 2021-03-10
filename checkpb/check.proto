@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package checklist;
+option go_package = "checkpb";
+
+import "google/api/annotations.proto";
+
+message Checklist {
+  string id = 1;
+  int32 order = 2;
+  string channel = 3;
+  string code = 4;
+  string category = 5;
+  string item = 6;
+}
+
+message CreateChecklistRequest {
+  Checklist checklist = 1;
+}
+
+message CreateChecklistResponse {
+  Checklist result = 1;
+}
+
+message ReadChecklistRequest {
+  string id = 1;
+}
+
+message ReadChecklistResponse {
+  Checklist result = 1;
+}
+
+message ReadChecklistQueryRequest {
+  Checklist query = 1;
+}
+
+message UpdateChecklistRequest {
+  Checklist checklist = 1;
+}
+
+message UpdateChecklistResponse {
+  Checklist result = 1;
+}
+
+message DeleteChecklistRequest {
+  string id = 1;
+}
+
+message DeleteChecklistResponse {
+  bool result = 1;
+}
+
+message ListChecklistRequest {
+
+}
+
+message ListChecklistResponse {
+  Checklist result = 1;
+}
+
+service ChecklistService {
+
+  rpc CreateChecklist(CreateChecklistRequest) returns (CreateChecklistResponse){};
+  rpc ReadChecklistByID(ReadChecklistRequest) returns (ReadChecklistResponse){};
+  rpc ReadChecklistByQuery(ReadChecklistQueryRequest) returns (stream ReadChecklistResponse) {};
+  rpc UpdateChecklist(UpdateChecklistRequest) returns (UpdateChecklistResponse) {};
+  rpc DeleteCheckist(DeleteChecklistRequest) returns (DeleteChecklistResponse) {};
+  rpc AllCheclkists(ListChecklistRequest) returns (stream ListChecklistResponse) {};
+  rpc CreateBulkChecklist(stream CreateChecklistRequest) returns (stream CreateChecklistResponse){};
+}
+
