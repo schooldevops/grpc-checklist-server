@@ -133,6 +133,17 @@ db.checklist.findOne({ order: {$lt: 10} });
 db.checklist.find({ order: {$lt: 10}, channel: 'Architecture' });
 ```
 
+## Run server
+
+```go
+go run server/server.go server/checklist.go
+```
+
+## Run client
+
+```go
+go run client/client.go
+```
 
 ## 참고자료
 
