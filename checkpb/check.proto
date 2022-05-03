@@ -58,8 +58,18 @@ message ListChecklistResponse {
   Checklist result = 1;
 }
 
+message StringMessage {
+  string value = 1;
+}
+
 service ChecklistService {
 
+  rpc Echo(StringMessage) returns (StringMessage) {
+    option (google.api.http) = {
+      post: "/v1/example/echo"
+      body: "*"
+    };
+  }  
   rpc CreateChecklist(CreateChecklistRequest) returns (CreateChecklistResponse){};
   rpc ReadChecklistByID(ReadChecklistRequest) returns (ReadChecklistResponse){};
   rpc ReadChecklistByQuery(ReadChecklistQueryRequest) returns (stream ReadChecklistResponse) {};

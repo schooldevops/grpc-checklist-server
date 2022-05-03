@@ -14,15 +14,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type server struct {}
+type server struct{}
 
 type checklistItem struct {
-	ID primitive.ObjectID `bson:"_id,omitempty"`
-	Order int32 `bson:"order, omitempty"`
-	Channel string `bson:"channel, omitempty"`
-	Code string `bson:"code, omitempty"`
-	Category string `bson:"category, omitempty"`
-	Item string `bson:"item, omitempty"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	Order    int32              `bson:"order, omitempty"`
+	Channel  string             `bson:"channel, omitempty"`
+	Code     string             `bson:"code, omitempty"`
+	Category string             `bson:"category, omitempty"`
+	Item     string             `bson:"item, omitempty"`
 }
 
 // checklistServer is main function
@@ -79,7 +79,7 @@ func (*server) CreateChecklist(ctx context.Context, req *checkpb.CreateChecklist
 func (*server) ReadChecklistByID(ctx context.Context, req *checkpb.ReadChecklistRequest) (*checkpb.ReadChecklistResponse, error) {
 	checklistID := req.GetId()
 	oid, err := primitive.ObjectIDFromHex(checklistID)
-	
+
 	if err != nil {
 		return nil, status.Errorf(
 			codes.InvalidArgument,
@@ -97,7 +97,7 @@ func (*server) ReadChecklistByID(ctx context.Context, req *checkpb.ReadChecklist
 			fmt.Sprintf("Cannot find checklist with specified ID: %v", err),
 		)
 	}
-// 인텔리안테크
+	// 인텔리안테크
 	return &checkpb.ReadChecklistResponse{
 		Result: dataToChecklistPb(checklist),
 	}, nil
@@ -107,7 +107,7 @@ func (*server) ReadChecklistByQuery(req *checkpb.ReadChecklistQueryRequest, stre
 	qry := req.GetQuery()
 
 	filter := bson.M{}
-	
+
 	if qry.GetOrder() != 0 {
 		filter["order"] = qry.GetOrder()
 	}
@@ -269,6 +269,12 @@ func (*server) AllCheclkists(req *checkpb.ListChecklistRequest, stream checkpb.C
 	return nil
 }
 
+func (*server) Echo(ctx context.Context, in *checkpb.StringMessage) (*checkpb.StringMessage, error) {
+	return &checkpb.StringMessage{
+		Value: "Hello World",
+	}, nil
+}
+
 func (*server) CreateBulkChecklist(stream checkpb.ChecklistService_CreateBulkChecklistServer) error {
 	for {
 		req, err := stream.Recv()
@@ -288,18 +294,18 @@ func (*server) CreateBulkChecklist(stream checkpb.ChecklistService_CreateBulkChe
 			Category: checklist.GetCategory(),
 			Item:     checklist.GetItem(),
 		}
-	
+
 		res, err := collection.InsertOne(context.Background(), payload)
 		if err != nil {
 			log.Fatalf("Insert Error %v", err)
 			return err
 		}
-	
+
 		objID, ok := res.InsertedID.(primitive.ObjectID)
 		if !ok {
 			return err
 		}
-	
+
 		result := &checkpb.Checklist{
 			Id:       objID.Hex(),
 			Channel:  checklist.GetChannel(),
@@ -311,20 +317,19 @@ func (*server) CreateBulkChecklist(stream checkpb.ChecklistService_CreateBulkChe
 		sendErr := stream.Send(&checkpb.CreateChecklistResponse{Result: result})
 		if sendErr != nil {
 			log.Fatalf("Error while sending data to client: %v", err)
-			return err;
+			return err
 		}
-		
+
 	}
 }
 
 func dataToChecklistPb(data *checklistItem) *checkpb.Checklist {
 	return &checkpb.Checklist{
-		Id: data.ID.Hex(),
-		Order: data.Order,
-		Channel: data.Channel,
-		Code: data.Code,
+		Id:       data.ID.Hex(),
+		Order:    data.Order,
+		Channel:  data.Channel,
+		Code:     data.Code,
 		Category: data.Category,
-		Item: data.Item,
+		Item:     data.Item,
 	}
 }
-

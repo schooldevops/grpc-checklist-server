@@ -14,7 +14,7 @@ import (
 func main() {
 	fmt.Println("Checklist Client Up")
 
-	cc, err := grpc.Dial("localhost:10000", grpc.WithInsecure())
+	cc, err := grpc.Dial("localhost:9090", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
